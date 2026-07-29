@@ -60,7 +60,7 @@ describe('providers', () => {
 						`currency pair ${from}_${to} not found`,// coinmate
 						'unsupported currency',// ibexmercado
 						'unknown asset pair',// kraken
-						'instrument ID does not exist',// okx
+						"instrument ID.*(does not|doesn't) exist",// okx
 					].join('|'), 'i').test(message), message);
 				});
 			});

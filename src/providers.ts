@@ -4,19 +4,6 @@ import type { Provider } from './types.js';
 
 export const providers: Provider[] = [
 	{
-		name: 'anycoin',
-		label: 'Anycoin',
-		url: 'https://www.anycoin.cz/api/compact_rates',
-		parseResponseBody: (body, currencies) => {
-			const data = JSON.parse(body) as { data: { coin_code: string; value: string }[] };
-			const { FROM, TO } = currencies;
-			const coinCode = `${FROM}${TO}`;
-			const rate = data.data.find(item => item.coin_code === coinCode)?.value;
-			assert.ok(rate, 'Unsupported currency pair');
-			return rate;
-		},
-	},
-	{
 		name: 'binance',
 		label: 'Binance',
 		url: 'https://api.binance.com/api/v3/ticker/price?symbol={{FROM}}{{TO}}',
@@ -54,8 +41,10 @@ export const providers: Provider[] = [
 		label: 'Bitstamp',
 		url: 'https://www.bitstamp.net/api/v2/ticker/{{from}}{{to}}/',
 		parseResponseBody: (body) => {
-			assert.ok(!/not found/i.test(body), 'Unsupported currency pair');
-			const data = JSON.parse(body) as { message?: string; last?: string };
+			const data = JSON.parse(body) as { message?: string; last?: string } | unknown[];
+			// An unknown pair is answered with the ticker list for every market
+			// rather than an error.
+			assert.ok(!Array.isArray(data), 'Unsupported currency pair');
 			assert.ok(!data.message, data.message);
 			return data.last;
 		},
