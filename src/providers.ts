@@ -1,21 +1,17 @@
-const assert = require('assert');
+import assert from 'assert';
 
-module.exports = [
+import type { Provider } from './types';
+
+export const providers: Provider[] = [
 	{
 		name: 'anycoin',
 		label: 'Anycoin',
 		url: 'https://www.anycoin.cz/api/compact_rates',
-		parseResponseBody: function(body, currencies) {
-			let data = JSON.parse(body);
-			let rate;
+		parseResponseBody: (body, currencies) => {
+			const data = JSON.parse(body) as { data: { coin_code: string; value: string }[] };
 			const { FROM, TO } = currencies;
 			const coinCode = `${FROM}${TO}`;
-			data.data.find(item => {
-				if (item.coin_code === coinCode) {
-					rate = item.value;
-					return true;
-				}
-			});
+			const rate = data.data.find(item => item.coin_code === coinCode)?.value;
 			assert.ok(rate, 'Unsupported currency pair');
 			return rate;
 		},
@@ -27,8 +23,8 @@ module.exports = [
 		convertSymbols: {
 			USD: 'USDT',
 		},
-		parseResponseBody: function(body, currencies) {
-			let data = JSON.parse(body);
+		parseResponseBody: (body) => {
+			const data = JSON.parse(body) as { code?: number; msg?: string; price?: string };
 			assert.ok(!data.code, data.msg);
 			return data.price;
 		},
@@ -37,8 +33,8 @@ module.exports = [
 		name: 'bitfinex',
 		label: 'Bitfinex',
 		url: 'https://api.bitfinex.com/v1/pubticker/{{from}}{{to}}',
-		parseResponseBody: function(body, currencies) {
-			let data = JSON.parse(body);
+		parseResponseBody: (body) => {
+			const data = JSON.parse(body) as { message?: string; last_price?: string };
 			assert.ok(!data.message, data.message);
 			return data.last_price;
 		},
@@ -47,8 +43,8 @@ module.exports = [
 		name: 'bitflyer',
 		label: 'bitFlyer',
 		url: 'https://api.bitflyer.com/v1/ticker?product_code={{FROM}}_{{TO}}',
-		parseResponseBody: function(body, currencies) {
-			let data = JSON.parse(body);
+		parseResponseBody: (body) => {
+			const data = JSON.parse(body) as { error_message?: string; ltp?: number };
 			assert.ok(!data.error_message, data.error_message);
 			return data.ltp;
 		},
@@ -57,9 +53,9 @@ module.exports = [
 		name: 'bitstamp',
 		label: 'Bitstamp',
 		url: 'https://www.bitstamp.net/api/v2/ticker/{{from}}{{to}}/',
-		parseResponseBody: function(body, currencies) {
+		parseResponseBody: (body) => {
 			assert.ok(!/not found/i.test(body), 'Unsupported currency pair');
-			let data = JSON.parse(body);
+			const data = JSON.parse(body) as { message?: string; last?: string };
 			assert.ok(!data.message, data.message);
 			return data.last;
 		},
@@ -68,9 +64,12 @@ module.exports = [
 		name: 'coinbase',
 		label: 'Coinbase',
 		url: 'https://api.coinbase.com/v2/exchange-rates?currency={{FROM}}',
-		parseResponseBody: function(body, currencies) {
-			let data = JSON.parse(body);
-			assert.ok(!data.errors, data.errors);
+		parseResponseBody: (body, currencies) => {
+			const data = JSON.parse(body) as {
+				errors?: unknown;
+				data?: { rates?: Record<string, string> };
+			};
+			assert.ok(!data.errors, JSON.stringify(data.errors));
 			const { TO } = currencies;
 			const rate = data.data && data.data.rates && data.data.rates[TO];
 			assert.ok(rate, 'Unsupported currency pair');
@@ -81,8 +80,8 @@ module.exports = [
 		name: 'coinmate',
 		label: 'CoinMate.io',
 		url: 'https://coinmate.io/api/ticker?currencyPair={{FROM}}_{{TO}}',
-		parseResponseBody: function(body, currencies) {
-			let data = JSON.parse(body);
+		parseResponseBody: (body) => {
+			const data = JSON.parse(body) as { errorMessage?: string; data?: { last?: number } };
 			assert.ok(!data.errorMessage, data.errorMessage);
 			return data.data && data.data.last;
 		},
@@ -114,8 +113,8 @@ module.exports = [
 			'ZAR': '22',
 			'PHP': '23',
 		},
-		parseResponseBody: function(body, currencies) {
-			let data = JSON.parse(body);
+		parseResponseBody: (body) => {
+			const data = JSON.parse(body) as { amount?: number };
 			const rate = data.amount;
 			assert.ok(rate, 'Unsupported currency');
 			return rate;
@@ -128,19 +127,23 @@ module.exports = [
 		convertSymbols: {
 			BTC: 'XBT',
 		},
-		parseResponseBody: function(body, currencies) {
-			let data = JSON.parse(body);
-			assert.deepStrictEqual(data.error, [], data.error);
+		parseResponseBody: (body, currencies) => {
+			const data = JSON.parse(body) as {
+				error?: string[];
+				result?: Record<string, { c?: string[] }>;
+			};
+			assert.deepStrictEqual(data.error, [], (data.error || []).join(', ') || 'Unexpected response body');
 			const { FROM, TO } = currencies;
-			return data.result && data.result[`X${FROM}Z${TO}`] && data.result[`X${FROM}Z${TO}`]['c'] && data.result[`X${FROM}Z${TO}`]['c'][0];
+			const pair = data.result && data.result[`X${FROM}Z${TO}`];
+			return pair && pair['c'] && pair['c'][0];
 		},
 	},
 	{
 		name: 'okx',
 		label: 'OKX',
 		url: 'https://www.okx.com/api/v5/market/index-tickers?instId={{FROM}}-{{TO}}',
-		parseResponseBody: function(body, currencies) {
-			let data = JSON.parse(body);
+		parseResponseBody: (body) => {
+			const data = JSON.parse(body) as { code?: string; msg?: string; data?: { idxPx?: string }[] };
 			assert.ok(data.code === '0', data.msg);
 			const rate = data.data && data.data[0] && data.data[0].idxPx;
 			assert.ok(rate, 'Unsupported currency pair');
