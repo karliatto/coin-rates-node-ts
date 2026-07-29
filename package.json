@@ -1,5 +1,5 @@
 {
-  "name": "coin-rates",
+  "name": "coin-rates-ts",
   "version": "2.0.0",
   "description": "Fetch currency exchange rate for coin/fiat currency pairs",
   "type": "module",

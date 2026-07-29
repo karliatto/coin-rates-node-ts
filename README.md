@@ -1,6 +1,4 @@
-# coin-rates
-
-![Build Status](https://github.com/bleskomat/coin-rates-node/actions/workflows/tests.yml/badge.svg)
+# coin-rates-ts
 
 Fetch currency exchange rate for a coin/fiat currency pair in nodejs.
 
