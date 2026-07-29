@@ -1,4 +1,4 @@
-import type { FormattedCurrencies } from './types';
+import type { FormattedCurrencies } from './types.js';
 
 export const formatText = (text: string, data: FormattedCurrencies): string => {
 	const { from, to, FROM, TO } = data;

@@ -1,7 +1,7 @@
 {
 	"extension": ["ts"],
+	"node-option": ["import=tsx"],
 	"recursive": true,
-	"require": "ts-node/register",
 	"spec": "test/unit/**/*.ts",
 	"timeout": 5000
 }

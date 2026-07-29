@@ -4,11 +4,20 @@
 
 Fetch currency exchange rate for a coin/fiat currency pair in nodejs.
 
+* [Requirements](#requirements)
 * [Installation](#installation)
 * [Usage](#usage)
+* [Development](#development)
 * [Tests](#tests)
 * [Changelog](#changelog)
 * [License](#license)
+
+
+## Requirements
+
+* nodejs >= 20.19
+
+The package is written in TypeScript, published as ESM with type declarations, and has no runtime dependencies.
 
 
 ## Installation
@@ -23,19 +32,42 @@ This will install `coin-rates` and add it to your application's `package.json` f
 ## Usage
 
 ```js
-const coinRates = require('coin-rates');
+import coinRates from 'coin-rates';
 
-coinRates.get({
+const rate = await coinRates.get({
 	provider: 'kraken',
 	currencies: {
 		from: 'BTC',
 		to: 'EUR',
 	},
-}).then(rate => {
-	console.log(rate);
-}).catch(error => {
-	console.error(error);
-})
+});
+console.log(rate);
+```
+
+Named exports are available as well:
+```ts
+import { get, fetch, providers } from 'coin-rates';
+import type { GetOptions, Provider } from 'coin-rates';
+```
+
+CommonJS applications can `require` the package from nodejs 20.19 onwards:
+```js
+const coinRates = require('coin-rates');
+```
+
+`get` caches the rate for a currency pair - by default for 5 minutes. Pass `cache: { maxAge }` to change that, or use `fetch` to always hit the provider.
+
+
+## Development
+
+Build the package to `dist/`:
+```bash
+npm run build
+```
+
+Check types without emitting:
+```bash
+npm run type-check
 ```
 
 
@@ -45,6 +77,7 @@ Run automated tests as follows:
 ```bash
 npm test
 ```
+Note that the tests query the live provider APIs.
 
 
 ## Changelog

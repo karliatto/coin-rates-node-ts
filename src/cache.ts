@@ -1,4 +1,4 @@
-import type { CacheOptions, Rate } from './types';
+import type { CacheOptions, Rate } from './types.js';
 
 type CacheItem = {
 	data: Rate;

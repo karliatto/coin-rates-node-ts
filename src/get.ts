@@ -1,7 +1,7 @@
-import * as cache from './cache';
-import { fetchRate } from './fetch';
+import * as cache from './cache.js';
+import { fetchRate } from './fetch.js';
 
-import type { GetOptions, Rate } from './types';
+import type { GetOptions, Rate } from './types.js';
 
 export const getRate = async (options: GetOptions): Promise<Rate> => {
 	options = options || ({} as GetOptions);

@@ -1,9 +1,9 @@
-import assert from 'assert';
+import assert from 'node:assert';
 
-import { formatText } from './formatText';
-import { providers } from './providers';
+import { formatText } from './formatText.js';
+import { providers } from './providers.js';
 
-import type { FetchOptions, FormattedCurrencies, ParseResponseBody, Rate, RetryOptions } from './types';
+import type { FetchOptions, FormattedCurrencies, ParseResponseBody, Rate, RetryOptions } from './types.js';
 
 const noop: ParseResponseBody = () => undefined;
 

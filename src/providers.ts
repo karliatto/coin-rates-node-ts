@@ -1,6 +1,6 @@
-import assert from 'assert';
+import assert from 'node:assert';
 
-import type { Provider } from './types';
+import type { Provider } from './types.js';
 
 export const providers: Provider[] = [
 	{

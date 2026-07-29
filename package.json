@@ -1,9 +1,17 @@
 {
   "name": "coin-rates",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "Fetch currency exchange rate for coin/fiat currency pairs",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
     "dist"
   ],
@@ -38,13 +46,13 @@
   },
   "homepage": "https://github.com/bleskomat/coin-rates-node#readme",
   "engines": {
-    "node": ">=18"
+    "node": ">=20.19"
   },
   "devDependencies": {
     "@types/mocha": "10.0.10",
-    "@types/node": "20.19.9",
+    "@types/node": "^20.19.9",
     "mocha": "10.2.0",
-    "ts-node": "10.9.2",
+    "tsx": "4.20.3",
     "typescript": "5.9.2"
   }
 }

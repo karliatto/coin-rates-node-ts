@@ -1,8 +1,8 @@
-import assert from 'assert';
+import assert from 'node:assert';
 
-import * as coinRates from '../../src';
+import * as coinRates from '../../src/index.js';
 
-import type { GetOptions } from '../../src';
+import type { GetOptions } from '../../src/index.js';
 
 describe('providers', () => {
 
